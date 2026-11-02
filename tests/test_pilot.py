@@ -147,3 +147,30 @@ class TestCollector:
             os.unlink(db_path)
 
 
+# ===== Analyzer tests (3) =====
+class TestAnalyzer:
+    def test_passed_no_analysis(self):
+        a = FailureAnalyzer()
+        r = TestResult(case_id="tc1", case_name="测试", status=StepStatus.PASSED)
+        result = a.analyze(r)
+        assert result.failure_reason is None
+
+    def test_element_not_found_diagnosis(self):
+        a = FailureAnalyzer()
+        r = TestResult(
+            case_id="tc2", case_name="测试", status=StepStatus.FAILED,
+            step_results=[StepResult(step_id="s1", status=StepStatus.FAILED, error="Element not found")],
+        )
+        result = a.analyze(r)
+        assert "元素未找到" in result.failure_reason
+
+    def test_timeout_diagnosis(self):
+        a = FailureAnalyzer()
+        r = TestResult(
+            case_id="tc3", case_name="测试", status=StepStatus.FAILED,
+            step_results=[StepResult(step_id="s1", status=StepStatus.FAILED, error="Timeout waiting for element")],
+        )
+        result = a.analyze(r)
+        assert "超时" in result.failure_reason
+
+
