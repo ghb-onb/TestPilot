@@ -174,3 +174,27 @@ class TestAnalyzer:
         assert "超时" in result.failure_reason
 
 
+# ===== Reporter tests (2) =====
+class TestReporter:
+    def test_report_generation(self):
+        r = ReportGenerator()
+        results = [
+            TestResult(case_id="1", case_name="A", status=StepStatus.PASSED),
+            TestResult(case_id="2", case_name="B", status=StepStatus.PASSED),
+            TestResult(case_id="3", case_name="C", status=StepStatus.FAILED),
+        ]
+        report = r.generate(results)
+        assert report.total == 3
+        assert report.passed == 2
+        assert report.failed == 1
+        assert report.pass_rate == 66.7
+
+    def test_report_dict(self):
+        r = ReportGenerator()
+        results = [TestResult(case_id="1", case_name="A", status=StepStatus.PASSED)]
+        report = r.generate(results)
+        d = r.to_dict(report)
+        assert d["total"] == 1
+        assert d["passed"] == 1
+
+
