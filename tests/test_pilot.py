@@ -106,3 +106,44 @@ class TestExecutor:
         assert result.total_duration_ms >= 0
 
 
+# ===== Collector tests (3) =====
+class TestCollector:
+    def test_collect_and_retrieve(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            c = ResultCollector(db_path=db_path)
+            r = TestResult(case_id="tc_x", case_name="测试", status=StepStatus.PASSED)
+            c.collect(r)
+            all_results = c.get_all()
+            assert len(all_results) == 1
+            assert all_results[0]["case_id"] == "tc_x"
+        finally:
+            os.unlink(db_path)
+
+    def test_batch_collect(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            c = ResultCollector(db_path=db_path)
+            results = [
+                TestResult(case_id=f"tc_{i}", case_name=f"测试{i}", status=StepStatus.PASSED)
+                for i in range(3)
+            ]
+            c.collect_batch(results)
+            assert len(c.get_all()) == 3
+        finally:
+            os.unlink(db_path)
+
+    def test_persistence(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            c = ResultCollector(db_path=db_path)
+            c.collect(TestResult(case_id="tc_p", case_name="持久化", status=StepStatus.PASSED))
+            c2 = ResultCollector(db_path=db_path)
+            assert len(c2.get_all()) == 1
+        finally:
+            os.unlink(db_path)
+
+
