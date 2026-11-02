@@ -4,5 +4,7 @@ fastapi>=0.100
 pydantic>=2.0
 uvicorn>=0.23
 httpx>=0.24
+# Roadmap 预留：PlaywrightExecutor 真实浏览器执行，当前代码未使用
 playwright>=1.40
+# Roadmap 预留：Planner 的 LLM 降级分支，当前代码未使用
 openai>=1.0
