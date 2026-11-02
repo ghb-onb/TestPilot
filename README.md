@@ -37,7 +37,7 @@ TestPilot 用一条职责清晰的六层流水线把这三件事拆开：**每�
                              │  5 个 TestStep
                              ▼
    ┌──────────────────────────────────────────────────┐
-   │  ③ Executor     逐步执行 → TestResult             │  Mock 模式 / Playwright 模式
+   │  ③ Executor     逐步执行 → TestResult             │  Mock 模式（Playwright 为 Roadmap 项）
    └──────────────────────────────────────────────────┘
                              │  PASSED / FAILED
                              ▼
@@ -70,7 +70,7 @@ TestPilot 用一条职责清晰的六层流水线把这三件事拆开：**每�
 | Collector | `src/collector.py` | `TestResult` | SQLite 行 | 只做持久化 |
 | Reporter | `src/reporter.py` | `List[TestResult]` | `TestReport` | 只做聚合统计 |
 
-拆分带来的直接好处：**换掉 Executor 就能从 Mock 切到真实浏览器，其余五层一行不改。**
+拆分带来的直接好处：**换掉 Executor 就能从 Mock 切到真实浏览器，其余五层一行不改。**（`PlaywrightExecutor` 本身尚未实现，这里是分层带来的可替换性，不是当前已有能力。）
 
 ---
 
@@ -83,7 +83,7 @@ TestPilot 用一条职责清晰的六层流水线把这三件事拆开：**每�
 | 测试 | Pytest | 23 个用例，覆盖六层 + 端到端 |
 | 持久化 | SQLite (stdlib) | 零依赖、单文件、支持查询 |
 | HTTP 接口 | FastAPI + Uvicorn | 自动生成 OpenAPI 文档 |
-| 真实执行（可选） | Playwright | 接口已对齐，见「设计取舍」Q1 |
+| 真实执行 | Playwright | **未实现**，属 Roadmap，见「设计取舍」Q1 |
 
 ---
 
