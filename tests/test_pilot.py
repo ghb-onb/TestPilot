@@ -76,3 +76,33 @@ class TestGeneratorLayer:
         assert len(tc.steps) == 3
 
 
+# ===== Executor tests (3) =====
+class TestExecutor:
+    def test_all_steps_pass(self):
+        e = MockExecutor()
+        tc = TestCase(id="tc1", name="测试", steps=[
+            TestStep(id="s1", action="click", selector="#valid-btn"),
+            TestStep(id="s2", action="fill", selector="#valid-input"),
+        ])
+        result = e.execute(tc)
+        assert result.status == StepStatus.PASSED
+        assert all(s.status == StepStatus.PASSED for s in result.step_results)
+
+    def test_step_failure(self):
+        e = MockExecutor()
+        tc = TestCase(id="tc2", name="测试", steps=[
+            TestStep(id="s1", action="click", selector="#broken-element"),
+        ])
+        result = e.execute(tc)
+        assert result.status == StepStatus.FAILED
+        assert result.step_results[0].error == "Element not found"
+
+    def test_duration_recorded(self):
+        e = MockExecutor()
+        tc = TestCase(id="tc3", name="测试", steps=[
+            TestStep(id="s1", action="click", selector="#valid"),
+        ])
+        result = e.execute(tc)
+        assert result.total_duration_ms >= 0
+
+
