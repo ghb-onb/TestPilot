@@ -45,3 +45,34 @@ class TestPlanner:
         assert s.type == ScenarioType.GENERAL
 
 
+# ===== Generator tests (4) =====
+# NOTE: the class must not be named `TestGenerator`, otherwise it shadows the
+# imported `TestGenerator` from src.generator inside this module's namespace.
+class TestGeneratorLayer:
+    def test_login_generation(self):
+        g = TestGenerator()
+        scenario = TestScenario(type=ScenarioType.LOGIN, name="登录测试")
+        tc = g.generate(scenario)
+        assert tc.id == "tc_login"
+        assert len(tc.steps) == 5
+        assert any("username" in s.selector for s in tc.steps)
+
+    def test_search_generation(self):
+        g = TestGenerator()
+        scenario = TestScenario(type=ScenarioType.SEARCH, name="搜索测试")
+        tc = g.generate(scenario)
+        assert len(tc.steps) == 4
+
+    def test_form_generation(self):
+        g = TestGenerator()
+        scenario = TestScenario(type=ScenarioType.FORM_SUBMIT, name="表单测试")
+        tc = g.generate(scenario)
+        assert len(tc.steps) == 5
+
+    def test_nav_generation(self):
+        g = TestGenerator()
+        scenario = TestScenario(type=ScenarioType.NAVIGATION, name="导航测试")
+        tc = g.generate(scenario)
+        assert len(tc.steps) == 3
+
+
