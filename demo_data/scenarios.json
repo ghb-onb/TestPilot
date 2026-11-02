@@ -1,0 +1,12 @@
+{
+  "description": "TestPilot demo scenarios - 7 natural language test requests covering all 5 scenario types",
+  "scenarios": [
+    "测试登录功能，用户名是admin，密码是123456",
+    "测试搜索功能，搜索关键词「AI测试」",
+    "测试表单提交功能",
+    "测试导航到首页 http://localhost:8080",
+    "测试登录功能，用户名是testuser",
+    "测试搜索功能，搜索「自动化测试工具」",
+    "测试一般功能"
+  ]
+}
