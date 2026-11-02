@@ -198,3 +198,47 @@ class TestReporter:
         assert d["passed"] == 1
 
 
+# ===== Integration tests (3) =====
+class TestPilotIntegration:
+    def test_single_run(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            pilot = TestPilot(db_path=db_path)
+            result = pilot.run("测试登录功能")
+            assert result.status == StepStatus.PASSED
+            assert result.case_id == "tc_login"
+        finally:
+            os.unlink(db_path)
+
+    def test_batch_run(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            pilot = TestPilot(db_path=db_path)
+            report = pilot.run_batch([
+                "测试登录功能",
+                "测试搜索功能",
+                "测试表单提交功能",
+            ])
+            assert report.total == 3
+            assert report.passed == 3
+        finally:
+            os.unlink(db_path)
+
+    def test_end_to_end(self):
+        with tempfile.NamedTemporaryFile(suffix=".db", delete=False) as f:
+            db_path = f.name
+        try:
+            pilot = TestPilot(db_path=db_path)
+            report = pilot.run_batch([
+                "测试登录功能，用户名admin密码123",
+                "测试搜索功能",
+                "测试表单提交功能",
+                "测试导航到 http://demo.com",
+                "随便测试一下",
+            ])
+            assert report.total == 5
+            assert report.passed == 5
+        finally:
+            os.unlink(db_path)
